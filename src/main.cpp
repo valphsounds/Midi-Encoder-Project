@@ -2,19 +2,19 @@
 #include <EncoderButton.h>
 #include <MIDIUSB.h>
 
-EncoderButton eb1(2, 3, 4);
+// Setting up encoderbuttons with pins
+EncoderButton EB1(2, 3, 4);
+EncoderButton EB2(5, 6, 4);
 
-void setup()
-{
-  eb1.setUserId(30);
-  eb1.setEncoderHandler(onEbEncoder);
-  eb1.setPressedHandler(onBtnPressed);
-  eb1.setReleasedHandler(onBtnReleased);
-}
+// Saving all encoderbuttons to a list
+EncoderButton *EBs[]{&EB1, &EB2};
+byte NUMBER_EBS = 2;
 
-void loop()
+void controlChange(byte channel, byte control, byte value)
 {
-  eb1.update();
+  midiEventPacket_t event = {0x0B, 0xB0 | channel, control, value};
+  MidiUSB.sendMIDI(event);
+  MidiUSB.flush();
 }
 
 void onEbEncoder(EncoderButton &eb)
@@ -36,9 +36,21 @@ void onBtnReleased(EncoderButton &eb)
   controlChange(16, byte(control), 0);
 }
 
-void controlChange(byte channel, byte control, byte value)
+void setup()
 {
-  midiEventPacket_t event = {0x0B, 0xB0 | channel, control, value};
-  MidiUSB.sendMIDI(event);
-  MidiUSB.flush();
+  for (int i = 0; i < NUMBER_EBS; i++)
+  {
+    EBs[i]->setUserId(30 + i);
+    EBs[i]->setEncoderHandler(onEbEncoder);
+    EBs[i]->setPressedHandler(onBtnPressed);
+    EBs[i]->setReleasedHandler(onBtnReleased);
+  }
+}
+
+void loop()
+{
+  for (int i = 0; i < NUMBER_EBS; i++)
+  {
+    EBs[i]->update();
+  }
 }
