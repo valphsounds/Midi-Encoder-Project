@@ -2,13 +2,14 @@
 #include <EncoderButton.h>
 #include <MIDIUSB.h>
 
-// Setting up encoderbuttons with pins
+// Setting up encoder buttons with pins
 EncoderButton EB1(2, 3, 4);
-EncoderButton EB2(5, 6, 4);
+EncoderButton EB2(5, 6, 7);
+EncoderButton EB3(8, 9, 10);
 
-// Saving all encoderbuttons to a list
-EncoderButton *EBs[]{&EB1, &EB2};
-byte NUMBER_EBS = 2;
+// Saving all encoder buttons to a list
+EncoderButton *EBs[]{&EB1, &EB2, &EB3};
+byte NUMBER_EBS = 3;
 
 void controlChange(byte channel, byte control, byte value)
 {
